@@ -57,4 +57,12 @@ $("#search-cupcake-form").on("submit", async function (evt) {
 	}
 });
 
+$("#cupcakes").on("click", "button", async function (evt) {
+	let itemId = $(this).closest("div").attr("data-cupcake-id");
+
+	let response = await axios.delete(`${BASE_URL}/cupcakes/${itemId}`);
+
+	$(this).closest("div").remove();
+});
+
 $(document).ready(genegrateAllCupcakes);
