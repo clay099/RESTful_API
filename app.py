@@ -49,6 +49,26 @@ def show_one_cupcake(cupcake_id):
     return jsonify(cupcake=returned_cupcake.serialize())
 
 
+@app.route('/api/cupcakes/search')
+def search_cupcake():
+    """
+    Return data on specific cupcake.
+
+    Returns JSON like:
+        {cupcakes: [{id, flavor, rating, size, image}, ...]}
+    """
+    import pdb
+    pdb.set_trace()
+    searched_flavor = request.data["flavor"]
+
+    returned_cupcakes = Cupcake.query.filter(
+        Cupcake.flavor.ilike(searched_flavor)).all()
+
+    all_cupcakes = [cupcake.serialize() for cupcake in returned_cupcakes]
+
+    return jsonify(cupcakes=all_cupcakes)
+
+
 @app.route('/api/cupcakes', methods=['POST'])
 def create_cupcake():
     """
@@ -60,7 +80,7 @@ def create_cupcake():
     flavor = request.json['flavor']
     size = request.json['size']
     rating = request.json['rating']
-    image = request.json.get('image', None)
+    image = request.json['image'] or None
 
     new_cupcake = Cupcake(flavor=flavor, size=size, rating=rating, image=image)
 
