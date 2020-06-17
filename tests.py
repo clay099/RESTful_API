@@ -10,20 +10,23 @@ app.config['SQLALCHEMY_ECHO'] = False
 # Make Flask errors be real errors, rather than HTML pages with error info
 app.config['TESTING'] = True
 
+# disable csrf checks
+app.config['WTF_CSRF_ENABLED'] = False
+
 db.drop_all()
 db.create_all()
 
 
 CUPCAKE_DATA = {
     "flavor": "TestFlavor",
-    "size": "TestSize",
+    "size": "Small",
     "rating": 5,
     "image": "http://test.com/cupcake.jpg"
 }
 
 CUPCAKE_DATA_2 = {
     "flavor": "TestFlavor2",
-    "size": "TestSize2",
+    "size": "Small",
     "rating": 10,
     "image": "http://test.com/cupcake2.jpg"
 }
@@ -60,7 +63,7 @@ class CupcakeViewsTestCase(TestCase):
                     {
                         "id": self.cupcake.id,
                         "flavor": "TestFlavor",
-                        "size": "TestSize",
+                        "size": "Small",
                         "rating": 5,
                         "image": "http://test.com/cupcake.jpg"
                     }
@@ -78,7 +81,7 @@ class CupcakeViewsTestCase(TestCase):
                 "cupcake": {
                     "id": self.cupcake.id,
                     "flavor": "TestFlavor",
-                    "size": "TestSize",
+                    "size": "Small",
                     "rating": 5,
                     "image": "http://test.com/cupcake.jpg"
                 }
@@ -100,7 +103,7 @@ class CupcakeViewsTestCase(TestCase):
             self.assertEqual(data, {
                 "cupcake": {
                     "flavor": "TestFlavor2",
-                    "size": "TestSize2",
+                    "size": "Small",
                     "rating": 10,
                     "image": "http://test.com/cupcake2.jpg"
                 }
@@ -118,7 +121,7 @@ class CupcakeViewsTestCase(TestCase):
                 "cupcake": {
                     "id": self.cupcake.id,
                     "flavor": "UpdatedTestFlavor",
-                    "size": "TestSize",
+                    "size": "Small",
                     "rating": 5,
                     "image": "http://test.com/cupcake.jpg"
                 }
