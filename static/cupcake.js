@@ -86,6 +86,7 @@ $("#cupcakes").on("click", "div", async function (evt) {
 		// get data about selected item
 		let response = await axios.get(`${BASE_URL}/cupcakes/${itemId}`);
 		updateEditForm(response);
+		submit_edit_form_to_API(itemId);
 		// else hide form
 	} else {
 		$("#edit-cupcake").attr("hidden", "");
@@ -96,11 +97,11 @@ $("#cupcakes").on("click", "div", async function (evt) {
 	// $("#cupcakes").append(response);
 });
 
+// obtain current data and pre-ill edit form
 function updateEditForm(cupcake) {
 	let flavor = cupcake.data.cupcake.flavor;
 	let size = cupcake.data.cupcake.size;
 	let upperSize = toUpperCase(size);
-	console.log(upperSize);
 	let rating = cupcake.data.cupcake.rating;
 	let image = cupcake.data.cupcake.image;
 
@@ -110,8 +111,37 @@ function updateEditForm(cupcake) {
 	$("#editImage").val(image);
 }
 
-// load cupcakes on once page is ready
-$(document).ready(genegrateAllCupcakes);
+// submit edited cupcake
+function submit_edit_form_to_API(itemId) {
+	$("#edit-cupcake-form").on("submit", async function (event) {
+		event.preventDefault();
+
+		// select all variables
+		let flavor = $("#editFlavor").val();
+		let size = $("#editSize").val();
+		let rating = $("#editRating").val();
+		let image = $("#editImage").val();
+		let csrf_token = $("#csrf_token").val();
+
+		const newCupcakeResponse = await axios.patch(`${BASE_URL}/cupcakes/${itemId}`, {
+			flavor,
+			size,
+			rating,
+			image,
+			csrf_token,
+		});
+
+		let newCupcake = $(generateCupcakesHTML(newCupcakeResponse.data.cupcake));
+
+		$(`[data-cupcake-id="${itemId}"]`).closest("div").remove();
+		// $("#cupcakes").find(`data-cupcake-id=${itemId}`).remove();
+
+		$("#cupcakes").append(newCupcake);
+		$("#new-cupcake-form").trigger("reset");
+		$("#edit-cupcake").attr("hidden", "");
+		$("#edit-cupcake-form").attr("hidden", "");
+	});
+}
 
 function toUpperCase(word) {
 	firstChar = word.substring(0, 1);
@@ -121,3 +151,6 @@ function toUpperCase(word) {
 	upperWord = upperf + tail;
 	return upperWord;
 }
+
+// load cupcakes on once page is ready
+$(document).ready(genegrateAllCupcakes);
