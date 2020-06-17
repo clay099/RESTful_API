@@ -63,9 +63,7 @@ def search_cupcake():
     Returns JSON like:
         {cupcakes: [{id, flavor, rating, size, image}, ...]}
     """
-    import pdb
-    pdb.set_trace()
-    searched_flavor = request.data["flavor"]
+    searched_flavor = request.json["flavor"]
 
     returned_cupcakes = Cupcake.query.filter(
         Cupcake.flavor.ilike(searched_flavor)).all()

@@ -54,7 +54,8 @@ $("#new-cupcake-form").on("submit", async function (event) {
 $("#search-cupcake-form").on("submit", async function (evt) {
 	evt.preventDefault();
 
-	let flavor = $("#flavor").val();
+	let flavor = $("#search-cupcake").val();
+	console.log(flavor);
 
 	const returnedCupcakes = await axios.get(`${BASE_URL}/cupcakes/search`, { flavor });
 
@@ -74,6 +75,7 @@ $("#cupcakes").on("click", "button", async function (evt) {
 	$(this).closest("div").remove();
 });
 
+// toggle edit-cupcake form & run functions on submit
 $("#cupcakes").on("click", "div", async function (evt) {
 	let itemId = $(this).closest("div").attr("data-cupcake-id");
 	console.log(itemId);
