@@ -1,5 +1,6 @@
 const BASE_URL = "http://127.0.0.1:5000/api";
 
+// create cupcake div html items
 function generateCupcakesHTML(cupcake) {
 	return `
     <div data-cupcake-id=${cupcake.id}>
@@ -8,13 +9,15 @@ function generateCupcakesHTML(cupcake) {
         <button class="delete-button btn btn-sm btn-danger">X</button>
         </li>
         <img class="cupcake-img>
-            src="${cupcake.image}"
+            src="${cupcake.image}" 
             alt="issue loading: ${cupcake.image}"
             // alt="no image provided"
     </div>
     `;
+	// todo src not showing up, spaces between "/" characters
 }
 
+// loop across db cupcakes
 async function genegrateAllCupcakes() {
 	const resp = await axios.get(`${BASE_URL}/cupcakes`);
 	for (let cupcakeData of resp.data.cupcakes) {
@@ -23,9 +26,11 @@ async function genegrateAllCupcakes() {
 	}
 }
 
+// submit new cupcake
 $("#new-cupcake-form").on("submit", async function (event) {
 	event.preventDefault();
 
+	// select all variables
 	let flavor = $("#flavor").val();
 	let size = $("#size").val();
 	let rating = $("#rating").val();
@@ -45,6 +50,7 @@ $("#new-cupcake-form").on("submit", async function (event) {
 	$("#new-cupcake-form").trigger("reset");
 });
 
+// search cupcake flavors
 $("#search-cupcake-form").on("submit", async function (evt) {
 	evt.preventDefault();
 
@@ -59,6 +65,7 @@ $("#search-cupcake-form").on("submit", async function (evt) {
 	}
 });
 
+// delete li & db object
 $("#cupcakes").on("click", "button", async function (evt) {
 	let itemId = $(this).closest("div").attr("data-cupcake-id");
 
@@ -67,4 +74,50 @@ $("#cupcakes").on("click", "button", async function (evt) {
 	$(this).closest("div").remove();
 });
 
+$("#cupcakes").on("click", "div", async function (evt) {
+	let itemId = $(this).closest("div").attr("data-cupcake-id");
+	console.log(itemId);
+
+	if ($("#edit-cupcake").is("[hidden]")) {
+		// show form and lable
+		$("#edit-cupcake").removeAttr("hidden");
+		$("#edit-cupcake-form").removeAttr("hidden");
+
+		// get data about selected item
+		let response = await axios.get(`${BASE_URL}/cupcakes/${itemId}`);
+		updateEditForm(response);
+		// else hide form
+	} else {
+		$("#edit-cupcake").attr("hidden", "");
+		$("#edit-cupcake-form").attr("hidden", "");
+	}
+
+	// $(this).closest("div").remove();
+	// $("#cupcakes").append(response);
+});
+
+function updateEditForm(cupcake) {
+	let flavor = cupcake.data.cupcake.flavor;
+	let size = cupcake.data.cupcake.size;
+	let upperSize = toUpperCase(size);
+	console.log(upperSize);
+	let rating = cupcake.data.cupcake.rating;
+	let image = cupcake.data.cupcake.image;
+
+	$("#editFlavor").val(flavor);
+	$("#editSize").attr(size);
+	$("#editRating").val(rating);
+	$("#editImage").val(image);
+}
+
+// load cupcakes on once page is ready
 $(document).ready(genegrateAllCupcakes);
+
+function toUpperCase(word) {
+	firstChar = word.substring(0, 1);
+	upperf = firstChar.toUpperCase();
+
+	tail = word.substring(1);
+	upperWord = upperf + tail;
+	return upperWord;
+}

@@ -2,7 +2,7 @@
 from flask import Flask, render_template, redirect, render_template, jsonify, request
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, Cupcake
-from forms import CupcakeForm
+from forms import CupcakeForm, EditCupcakeForm
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgres:///cupcakes"
@@ -22,7 +22,8 @@ def new_cupcake_form():
     returns home page containing a form to add to the
     """
     form = CupcakeForm()
-    return render_template('home.html', form=form)
+    form2 = EditCupcakeForm()
+    return render_template('home.html', form=form, form2=form2)
 
 
 @app.route('/api/cupcakes')

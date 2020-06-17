@@ -19,6 +19,26 @@
         <ul id="cupcakes">
         </ul>
 
+        <h2 id='edit-cupcake' hidden>Edit Cupcake</h2>
+        <form id="edit-cupcake-form" class="form-group" hidden>
+            {{ form.hidden_tag() }}
+
+            {% for field in form2 if field.widget.input_type !='hidden' %}
+            <div class="form-group-row justify-content-start">
+                {{ field.label(class_='col-md-3 col-form-lable') }}
+                {{ field(class='col-md-7')}}
+                {% if field.errors %}
+                {% for err in field.errors %}
+                <small class="form-text text-danger  col-md-2">
+                    {{ err }}
+                </small>
+                {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-success">Update</button>
+        </form>
+
         <h2>Search Cupcake Flavor</h2>
         <form id="search-cupcake-form" class="form-group">
             <div class="form-group-row justify-content-start">
