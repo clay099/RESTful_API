@@ -30,12 +30,14 @@ $("#new-cupcake-form").on("submit", async function (event) {
 	let size = $("#size").val();
 	let rating = $("#rating").val();
 	let image = $("#image").val();
+	let csrf_token = $("#csrf_token").val();
 
 	const newCupcakeResponse = await axios.post(`${BASE_URL}/cupcakes`, {
 		flavor,
 		size,
 		rating,
 		image,
+		csrf_token,
 	});
 
 	let newCupcake = $(generateCupcakesHTML(newCupcakeResponse.data.cupcake));

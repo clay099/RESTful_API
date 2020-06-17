@@ -2,6 +2,7 @@
 from flask import Flask, render_template, redirect, render_template, jsonify, request
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, Cupcake
+from forms import CupcakeForm
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgres:///cupcakes"
@@ -20,7 +21,8 @@ def new_cupcake_form():
     """
     returns home page containing a form to add to the
     """
-    return render_template('home.html')
+    form = CupcakeForm()
+    return render_template('home.html', form=form)
 
 
 @app.route('/api/cupcakes')
@@ -33,6 +35,9 @@ def show_all_cupcakes():
     """
 
     all_cupcakes = [cupcake.serialize() for cupcake in Cupcake.query.all()]
+
+    jsonify_cupcakes = jsonify(cupcakes=all_cupcakes)
+
     return jsonify(cupcakes=all_cupcakes)
 
 
@@ -77,18 +82,22 @@ def create_cupcake():
     Returns JSON like:
         {cupcake: [{id, flavor, rating, size, image}]}
     """
-    flavor = request.json['flavor']
-    size = request.json['size']
-    rating = request.json['rating']
-    image = request.json['image'] or None
 
-    new_cupcake = Cupcake(flavor=flavor, size=size, rating=rating, image=image)
+    form = CupcakeForm()
 
-    db.session.add(new_cupcake)
-    db.session.commit()
+    if form.validate_on_submit():
+        data = {k: v for k, v in form.data.items() if k != "csrf_token"}
+        new_cupcake = Cupcake(**data)
+        db.session.add(new_cupcake)
+        db.session.commit()
 
-    response_json = jsonify(cupcake=new_cupcake.serialize())
-    return (response_json, 201)
+        response_json = jsonify(cupcake=new_cupcake.serialize())
+        return (response_json, 201)
+    else:
+        print('error occured')
+        import pdb
+        pdb.set_trace()
+        return jsonify(message="form error")
 
 
 @app.route('/api/cupcakes/<int:cupcake_id>', methods=['PATCH'])
